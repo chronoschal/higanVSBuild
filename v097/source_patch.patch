@@ -5,7 +5,7 @@
  auto ResampleAverage::sampleLinear() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
@@ -40,7 +40,7 @@
  auto ResampleCosine::sample() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
@@ -51,7 +51,7 @@
  auto ResampleCubic::sample() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -3);
@@ -68,7 +68,7 @@
      bits = 8;
 --- ruby/video/directdraw.cpp
 +++ ruby/video/directdraw.cpp
-@@ -1,8 +1,15 @@
+@@ -1,8 +1,13 @@
 +#ifndef interface
 +#define interface struct
 +#endif
@@ -76,35 +76,34 @@
 +#undef interface
  
  struct VideoDD : Video {
-+  VideoDD() : ddrawModule(nullptr, &::FreeLibrary)
-+  {}
    ~VideoDD() { term(); }
  
-+  std::unique_ptr<HINSTANCE__, decltype(&::FreeLibrary)> ddrawModule;
++  HMODULE ddrawModule;
    LPDIRECTDRAW lpdd = nullptr;
    LPDIRECTDRAW7 lpdd7 = nullptr;
    LPDIRECTDRAWSURFACE7 screen = nullptr;
-@@ -136,7 +143,14 @@
+@@ -136,7 +141,14 @@
    }
  
    auto init() -> bool {
 -    DirectDrawCreate(0, &lpdd, 0);
-+    ddrawModule.reset(LoadLibraryW(L"ddraw.dll"));
++    ddrawModule = LoadLibraryA("ddraw.dll");
 +    if (!ddrawModule) return false;
 +
-+    auto directDrawCreateFn = reinterpret_cast<decltype(&::DirectDrawCreate)>(GetProcAddress(
-+        reinterpret_cast<HMODULE>(ddrawModule.get()), "DirectDrawCreate"));
++    auto directDrawCreateFn =
++        (decltype(&::DirectDrawCreate))(GetProcAddress(ddrawModule, "DirectDrawCreate"));
 +    if (!directDrawCreateFn) return false;
 +    
 +    directDrawCreateFn(0, &lpdd, 0);
      lpdd->QueryInterface(IID_IDirectDraw7, (void**)&lpdd7);
      if(lpdd) { lpdd->Release(); lpdd = 0; }
  
-@@ -167,5 +181,6 @@
+@@ -167,5 +179,7 @@
      if(screen) { screen->Release(); screen = 0; }
      if(lpdd7) { lpdd7->Release(); lpdd7 = 0; }
      if(lpdd) { lpdd->Release(); lpdd = 0; }
-+    ddrawModule.reset();
++    FreeLibrary(ddrawModule);
++    ddrawModule = nullptr;
    }
  };
 --- ruby/audio/directsound.cpp
@@ -136,7 +135,7 @@
  auto ResampleHermite::sample() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -3);
@@ -157,7 +156,7 @@
      SelectObject(ps.hdc, label->self()->hfont);
      unsigned length = GetWindowTextLength(hwnd);
 -    wchar_t text[length + 1];
-+    wchar_t *text = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
++    wchar_t *text = (wchar_t*)alloca((length + 1) * sizeof(wchar_t));
      GetWindowText(hwnd, text, length + 1);
      text[length] = 0;
      DrawText(ps.hdc, text, -1, &rc, DT_CALCRECT | DT_END_ELLIPSIS);
@@ -168,7 +167,7 @@
  auto ResampleLinear::sample() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
@@ -179,51 +178,20 @@
  auto pLineEdit::_text() -> string {
    unsigned length = GetWindowTextLength(hwnd);
 -  wchar_t text[length + 1];
-+  wchar_t *text = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
++  wchar_t *text = (wchar_t*)alloca((length + 1) * sizeof(wchar_t));
    GetWindowText(hwnd, text, length + 1);
    text[length] = 0;
    return (const char*)utf8_t(text);
 --- nall/main.hpp
 +++ nall/main.hpp
-@@ -24,3 +24,40 @@
+@@ -24,3 +24,9 @@
  auto main(int argc, char** argv) -> int {
    return nall::main(argc, argv);
  }
 +
 +#if defined(COMPILER_VISUALCPP)
-+#include <locale>
-+#include <codecvt>
-+#include <vector>
-+auto WINAPI wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, PWSTR pCmdLine, int /*nCmdShow*/) -> int
-+{
-+    // Split up the command line into the argc/argv format expected by main.
-+    int argc;
-+    PWSTR* utf16Args = CommandLineToArgvW(pCmdLine, &argc);
-+
-+    // Convert the UTF16-encoded arguments to UTF8-encoded arguments.
-+    std::vector<std::string> utf8Args;
-+    int utf8ArgsTotalLength = 0;
-+    for (int i = 0; i < argc; ++i)
-+    {
-+        utf8Args.push_back(std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(utf16Args[i]));
-+        utf8ArgsTotalLength += utf8Args.back().length() + 1;
-+    }
-+
-+    // Make a modifiable buffer to hold the UTF8-encoded arguments to allow a
-+    // char** to be passed to main.
-+    std::vector<char> argvData;
-+    argvData.resize(utf8ArgsTotalLength);
-+    std::vector<char*> argv;
-+    int currentArgvDataOffset = 0;
-+    for (int i = 0; i < argc; ++i)
-+    {
-+        char* argvDataPosition = argvData.data() + currentArgvDataOffset;
-+        strcpy(argvDataPosition, utf8Args[i].c_str());
-+        argv.push_back(argvDataPosition);
-+        currentArgvDataOffset += utf8Args[i].length() + 1;
-+    }
-+
-+    return ::main(argc, argv.data());
++auto WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, PSTR pCmdLine, int /*nCmdShow*/) -> int {
++  return ::main(0, nullptr);
 +}
 +#endif
 --- nall/dsp/resample/nearest.hpp
@@ -233,7 +201,7 @@
  auto ResampleNearest::sample() -> void {
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
++    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
  
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
@@ -376,7 +344,7 @@
  auto pTextEdit::text() const -> string {
    unsigned length = GetWindowTextLength(hwnd);
 -  wchar_t buffer[length + 1];
-+  wchar_t *buffer = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
++  wchar_t *buffer = (wchar_t*)alloca((length + 1) * sizeof(wchar_t));
    GetWindowText(hwnd, buffer, length + 1);
    buffer[length] = 0;
    string text = (const char*)utf8_t(buffer);
@@ -387,7 +355,7 @@
      GLint length = 0;
      glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 -    char text[length + 1];
-+    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
++    char *text = (char*)alloca(length + 1);
      glGetShaderInfoLog(shader, length, &length, text);
      text[length] = 0;
      print("[ruby::OpenGL: shader compiler error]\n", (const char*)text, "\n\n");
@@ -396,7 +364,7 @@
      GLint length = 0;
      glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 -    char text[length + 1];
-+    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
++    char *text = (char*)alloca(length + 1);
      glGetProgramInfoLog(program, length, &length, text);
      text[length] = 0;
      print("[ruby::OpenGL: shader linker error]\n", (const char*)text, "\n\n");
@@ -405,10 +373,23 @@
      GLint length = 0;
      glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 -    char text[length + 1];
-+    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
++    char *text = (char*)alloca(length + 1);
      glGetProgramInfoLog(program, length, &length, text);
      text[length] = 0;
      print("[ruby::OpenGL: shader validation error]\n", (const char*)text, "\n\n");
+--- ruby/input/windows.cpp
++++ ruby/input/windows.cpp
+@@ -1,6 +1,10 @@
++#ifndef interface
++#define interface struct
++#endif
+ #include <xinput.h>
+ #define DIRECTINPUT_VERSION 0x0800
+ #include <dinput.h>
++#undef interface
+ 
+ #include "shared/rawinput.cpp"
+ #include "keyboard/rawinput.cpp"
 --- ruby/audio/xaudio2.cpp
 +++ ruby/audio/xaudio2.cpp
 @@ -2,7 +2,7 @@
