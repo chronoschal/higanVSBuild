@@ -22,6 +22,7 @@ To stay as close to the official higan build/release as possible, the XP toolcha
 The gcc/mingw system that official higan builds use comes with many headers and libraries that are normally provided by separate SDKs (at least when targeting XP). Therefore, it may be necessary to get some additional dependencies before you will be able to build higan using higanVSBuild. Currently, the old DirectX SDK and 7.1 Platform SDK are expected, although it may be possible to use the more modern Windows SDK depending on what your goals are. It may also be necessary to get additional OpenGL headers. Unfortunately, the higanVSBuild projects currently assume the last standalone DirectX SDK relelease (June 2010) is installed in its default location on C:\, so it may be necessary to update this if this isn't the case for you.
 
 Here is a list of dependencies that will likely need to be provided before higan will build in VS:
+
 1. Windows SDK 7.1 (https://www.microsoft.com/en-us/download/details.aspx?id=8279)
 2. Direct X SDK June 2010 (https://www.microsoft.com/en-us/download/details.aspx?id=6812)
 3. OpenGL headers (like wglext.h) that may not be part of the Windows SDK. (Grab these from the TDM-mingw installation you would normally use to build higan, or grab them from the official OpenGL site.)
