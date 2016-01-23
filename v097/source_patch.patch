@@ -1,0 +1,449 @@
+--- nall/dsp/resample/average.hpp
++++ nall/dsp/resample/average.hpp
+@@ -52,7 +52,7 @@
+ 
+ auto ResampleAverage::sampleLinear() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -1);
+--- nall/string/base.hpp
++++ nall/string/base.hpp
+@@ -158,6 +158,7 @@
+   inline auto operator[](int) const -> const char&;
+   template<typename... P> inline auto assign(P&&...) -> type&;
+   template<typename T, typename... P> inline auto append(const T&, P&&...) -> type&;
++  template<typename... P> inline auto append(const string& value, P&&... p)->string&;
+   template<typename... P> inline auto append(const nall::format&, P&&...) -> type&;
+   inline auto append() -> type&;
+   template<typename T> inline auto _append(const stringify<T>&) -> string&;
+--- nall/string/core.hpp
++++ nall/string/core.hpp
+@@ -30,6 +30,11 @@
+   return append(forward<P>(p)...);
+ }
+ 
++template<typename... P> auto string::append(const nall::string& value, P&&... p) -> string& {
++    _append(stringify<const nall::string&>(value));
++    return append(forward<P>(p)...);
++}
++
+ template<typename... P> auto string::append(const nall::format& value, P&&... p) -> string& {
+   format(value);
+   return append(forward<P>(p)...);
+--- nall/dsp/resample/cosine.hpp
++++ nall/dsp/resample/cosine.hpp
+@@ -23,7 +23,7 @@
+ 
+ auto ResampleCosine::sample() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -1);
+--- nall/dsp/resample/cubic.hpp
++++ nall/dsp/resample/cubic.hpp
+@@ -23,7 +23,7 @@
+ 
+ auto ResampleCubic::sample() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -3);
+--- higan/sfc/coprocessor/spc7110/decompressor.cpp
++++ higan/sfc/coprocessor/spc7110/decompressor.cpp
+@@ -33,7 +33,7 @@
+   }
+ 
+   auto initialize(uint mode, uint origin) -> void {
+-    for(auto& root : context) for(auto& node : root) node = {0, 0};
++    for(auto& root : context) for(auto& node : root) { node = {0, 0}; }
+     bpp = 1 << mode;
+     offset = origin;
+     bits = 8;
+--- ruby/video/directdraw.cpp
++++ ruby/video/directdraw.cpp
+@@ -1,8 +1,15 @@
++#ifndef interface
++#define interface struct
++#endif
+ #include <ddraw.h>
++#undef interface
+ 
+ struct VideoDD : Video {
++  VideoDD() : ddrawModule(nullptr, &::FreeLibrary)
++  {}
+   ~VideoDD() { term(); }
+ 
++  std::unique_ptr<HINSTANCE__, decltype(&::FreeLibrary)> ddrawModule;
+   LPDIRECTDRAW lpdd = nullptr;
+   LPDIRECTDRAW7 lpdd7 = nullptr;
+   LPDIRECTDRAWSURFACE7 screen = nullptr;
+@@ -136,7 +143,14 @@
+   }
+ 
+   auto init() -> bool {
+-    DirectDrawCreate(0, &lpdd, 0);
++    ddrawModule.reset(LoadLibraryW(L"ddraw.dll"));
++    if (!ddrawModule) return false;
++
++    auto directDrawCreateFn = reinterpret_cast<decltype(&::DirectDrawCreate)>(GetProcAddress(
++        reinterpret_cast<HMODULE>(ddrawModule.get()), "DirectDrawCreate"));
++    if (!directDrawCreateFn) return false;
++    
++    directDrawCreateFn(0, &lpdd, 0);
+     lpdd->QueryInterface(IID_IDirectDraw7, (void**)&lpdd7);
+     if(lpdd) { lpdd->Release(); lpdd = 0; }
+ 
+@@ -167,5 +181,6 @@
+     if(screen) { screen->Release(); screen = 0; }
+     if(lpdd7) { lpdd7->Release(); lpdd7 = 0; }
+     if(lpdd) { lpdd->Release(); lpdd = 0; }
++    ddrawModule.reset();
+   }
+ };
+--- ruby/audio/directsound.cpp
++++ ruby/audio/directsound.cpp
+@@ -1,4 +1,8 @@
++#ifndef interface
++#define interface struct
++#endif
+ #include <dsound.h>
++#undef interface
+ 
+ struct AudioDS : Audio {
+   ~AudioDS() { term(); }
+--- higan/processor/gsu/gsu.hpp
++++ higan/processor/gsu/gsu.hpp
+@@ -109,7 +109,7 @@
+   template<int> auto op_xor_r();
+ 
+   //table.cpp
+-  auto (GSU::*opcode_table[1024])() -> void;
++  void (GSU::*opcode_table[1024])();
+   auto initialize_opcode_table() -> void;
+ 
+   //serialization.cpp
+--- nall/dsp/resample/hermite.hpp
++++ nall/dsp/resample/hermite.hpp
+@@ -23,7 +23,7 @@
+ 
+ auto ResampleHermite::sample() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -3);
+--- higan/target-tomoko/program/interface.cpp
++++ higan/target-tomoko/program/interface.cpp
+@@ -114,6 +114,7 @@
+ }
+ 
+ auto Program::dipSettings(const Markup::Node& node) -> uint {
++  return 0;
+ }
+ 
+ auto Program::path(uint group) -> string {
+--- hiro/windows/widget/label.cpp
++++ hiro/windows/widget/label.cpp
+@@ -48,7 +48,7 @@
+     SetBkMode(ps.hdc, TRANSPARENT);
+     SelectObject(ps.hdc, label->self()->hfont);
+     unsigned length = GetWindowTextLength(hwnd);
+-    wchar_t text[length + 1];
++    wchar_t *text = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
+     GetWindowText(hwnd, text, length + 1);
+     text[length] = 0;
+     DrawText(ps.hdc, text, -1, &rc, DT_CALCRECT | DT_END_ELLIPSIS);
+--- nall/dsp/resample/linear.hpp
++++ nall/dsp/resample/linear.hpp
+@@ -23,7 +23,7 @@
+ 
+ auto ResampleLinear::sample() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -1);
+--- hiro/windows/widget/line-edit.cpp
++++ hiro/windows/widget/line-edit.cpp
+@@ -50,7 +50,7 @@
+ 
+ auto pLineEdit::_text() -> string {
+   unsigned length = GetWindowTextLength(hwnd);
+-  wchar_t text[length + 1];
++  wchar_t *text = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
+   GetWindowText(hwnd, text, length + 1);
+   text[length] = 0;
+   return (const char*)utf8_t(text);
+--- nall/main.hpp
++++ nall/main.hpp
+@@ -24,3 +24,40 @@
+ auto main(int argc, char** argv) -> int {
+   return nall::main(argc, argv);
+ }
++
++#if defined(COMPILER_VISUALCPP)
++#include <locale>
++#include <codecvt>
++#include <vector>
++auto WINAPI wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, PWSTR pCmdLine, int /*nCmdShow*/) -> int
++{
++    // Split up the command line into the argc/argv format expected by main.
++    int argc;
++    PWSTR* utf16Args = CommandLineToArgvW(pCmdLine, &argc);
++
++    // Convert the UTF16-encoded arguments to UTF8-encoded arguments.
++    std::vector<std::string> utf8Args;
++    int utf8ArgsTotalLength = 0;
++    for (int i = 0; i < argc; ++i)
++    {
++        utf8Args.push_back(std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(utf16Args[i]));
++        utf8ArgsTotalLength += utf8Args.back().length() + 1;
++    }
++
++    // Make a modifiable buffer to hold the UTF8-encoded arguments to allow a
++    // char** to be passed to main.
++    std::vector<char> argvData;
++    argvData.resize(utf8ArgsTotalLength);
++    std::vector<char*> argv;
++    int currentArgvDataOffset = 0;
++    for (int i = 0; i < argc; ++i)
++    {
++        char* argvDataPosition = argvData.data() + currentArgvDataOffset;
++        strcpy(argvDataPosition, utf8Args[i].c_str());
++        argv.push_back(argvDataPosition);
++        currentArgvDataOffset += utf8Args[i].length() + 1;
++    }
++
++    return ::main(argc, argv.data());
++}
++#endif
+--- nall/dsp/resample/nearest.hpp
++++ nall/dsp/resample/nearest.hpp
+@@ -23,7 +23,7 @@
+ 
+ auto ResampleNearest::sample() -> void {
+   while(fraction <= 1.0) {
+-    double channel[dsp.settings.channels];
++    double *channel = static_cast<double*>(alloca(dsp.settings.channels * sizeof(double)));
+ 
+     for(auto n : range(dsp.settings.channels)) {
+       double a = dsp.buffer.read(n, -1);
+--- nall/string/markup/node.hpp
++++ nall/string/markup/node.hpp
+@@ -95,9 +95,13 @@
+     return std::swap(shared->_children[x], shared->_children[y]), true;
+   }
+ 
+-  auto sort(function<bool (Node, Node)> comparator = [](auto x, auto y) {
+-    return string::compare(x.shared->_name, y.shared->_name) < 0;
+-  }) -> void {
++  auto sort(function<bool (Node, Node)> comparator) -> void {
++    if (!comparator)
++    {
++      comparator = [](auto x, auto y) {
++        return string::compare(x.shared->_name, y.shared->_name) < 0;
++      };
++    }
+     nall::sort(shared->_children.data(), shared->_children.size(), [&](auto x, auto y) {
+       return comparator(x, y);  //this call converts SharedNode objects to Node objects
+     });
+--- hiro/windows/platform.hpp
++++ hiro/windows/platform.hpp
+@@ -16,7 +16,7 @@
+   };
+ };
+ 
+-using WindowProc = auto CALLBACK (*)(HWND, UINT, WPARAM, LPARAM) -> LRESULT;
++using WindowProc = auto (CALLBACK *)(HWND, UINT, WPARAM, LPARAM) -> LRESULT;
+ 
+ static vector<wObject> windows;
+ 
+--- nall/platform.hpp
++++ nall/platform.hpp
+@@ -36,12 +36,16 @@
+ #include <sys/stat.h>
+ 
+ #if defined(PLATFORM_WINDOWS)
++#ifndef interface
++#define interface struct
++#endif
+   #include <io.h>
+   #include <direct.h>
+   #include <shlobj.h>
+   #include <wchar.h>
+   #include <winsock2.h>
+   #include <ws2tcpip.h>
++#undef interface
+ #else
+   #include <dlfcn.h>
+   #include <unistd.h>
+@@ -56,6 +60,27 @@
+ 
+ #if defined(COMPILER_VISUALCPP)
+   #define va_copy(dest, src) ((dest) = (src))
++
++#ifndef ssize_t
++  #define ssize_t SSIZE_T
++#endif
++
++#ifndef R_OK
++  #define R_OK 4
++#endif
++#ifndef W_OK
++  #define W_OK 2
++#endif
++#ifndef X_OK
++  #define X_OK 1
++#endif
++#ifndef F_OK
++  #define F_OK 0
++#endif
++
++#ifndef S_ISREG
++  #define S_ISREG(mode) ((mode & _S_IFREG) != 0)
++#endif
+ #endif
+ 
+ #if defined(PLATFORM_WINDOWS)
+--- nall/windows/registry.hpp
++++ nall/windows/registry.hpp
+@@ -3,6 +3,9 @@
+ #include <nall/platform.hpp>
+ #include <nall/string.hpp>
+ 
++#ifndef interface
++#define interface struct
++#endif
+ #include <shlwapi.h>
+ #undef interface
+ #ifndef KEY_WOW64_64KEY
+--- nall/run.hpp
++++ nall/run.hpp
+@@ -78,7 +78,7 @@
+ 
+ template<typename... P> inline auto execute(const string& name, P&&... p) -> string {
+   lstring argl(name, forward<P>(p)...);
+-  for(auto& arg : argl) if(arg.find(" ")) arg = {"\"", arg, "\""};
++  for(auto& arg : argl) if(arg.find(" ")) { arg = {"\"", arg, "\""}; }
+   string arguments = argl.merge(" ");
+ 
+   SECURITY_ATTRIBUTES sa;
+@@ -141,7 +141,7 @@
+ 
+ template<typename... P> inline auto invoke(const string& name, P&&... p) -> void {
+   lstring argl(forward<P>(p)...);
+-  for(auto& arg : argl) if(arg.find(" ")) arg = {"\"", arg, "\""};
++  for(auto& arg : argl) if(arg.find(" ")) { arg = {"\"", arg, "\""}; }
+   string arguments = argl.merge(" ");
+   ShellExecute(nullptr, nullptr, utf16_t(name), utf16_t(arguments), nullptr, SW_SHOWNORMAL);
+ }
+--- nall/stdint.hpp
++++ nall/stdint.hpp
+@@ -47,7 +47,9 @@
+ 
+ static_assert(sizeof(float)       >=  4, "float32_t is not of the correct size");
+ static_assert(sizeof(double)      >=  8, "float64_t is not of the correct size");
++#ifdef float80_t
+ static_assert(sizeof(long double) >= 10, "float80_t is not of the correct size");
++#endif
+ 
+ using int8 = int8_t;
+ using int16 = int16_t;
+--- higan/sfc/system/system.cpp
++++ higan/sfc/system/system.cpp
+@@ -105,7 +105,7 @@
+   }
+ 
+   region = configuration.region;
+-  if(region == Region::Autodetect) {
++  if(region() == Region::Autodetect) {
+     region = (cartridge.region() == Cartridge::Region::NTSC ? Region::NTSC : Region::PAL);
+   }
+   expansionPort = configuration.expansionPort;
+--- hiro/windows/widget/text-edit.cpp
++++ hiro/windows/widget/text-edit.cpp
+@@ -58,7 +58,7 @@
+ 
+ auto pTextEdit::text() const -> string {
+   unsigned length = GetWindowTextLength(hwnd);
+-  wchar_t buffer[length + 1];
++  wchar_t *buffer = static_cast<wchar_t*>(alloca((length + 1) * sizeof(wchar_t)));
+   GetWindowText(hwnd, buffer, length + 1);
+   buffer[length] = 0;
+   string text = (const char*)utf8_t(buffer);
+--- ruby/video/opengl/utility.hpp
++++ ruby/video/opengl/utility.hpp
+@@ -70,7 +70,7 @@
+   if(result == GL_FALSE) {
+     GLint length = 0;
+     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+-    char text[length + 1];
++    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
+     glGetShaderInfoLog(shader, length, &length, text);
+     text[length] = 0;
+     print("[ruby::OpenGL: shader compiler error]\n", (const char*)text, "\n\n");
+@@ -87,7 +87,7 @@
+   if(result == GL_FALSE) {
+     GLint length = 0;
+     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+-    char text[length + 1];
++    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
+     glGetProgramInfoLog(program, length, &length, text);
+     text[length] = 0;
+     print("[ruby::OpenGL: shader linker error]\n", (const char*)text, "\n\n");
+@@ -98,7 +98,7 @@
+   if(result == GL_FALSE) {
+     GLint length = 0;
+     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+-    char text[length + 1];
++    char *text = static_cast<char*>(alloca((length + 1) * sizeof(char)));
+     glGetProgramInfoLog(program, length, &length, text);
+     text[length] = 0;
+     print("[ruby::OpenGL: shader validation error]\n", (const char*)text, "\n\n");
+--- ruby/audio/xaudio2.cpp
++++ ruby/audio/xaudio2.cpp
+@@ -2,7 +2,7 @@
+ #include <windows.h>
+ 
+ struct AudioXAudio2 : Audio, public IXAudio2VoiceCallback {
+-  AudioXAudio2() { term(); }
++  ~AudioXAudio2() { term(); }
+ 
+   IXAudio2* pXAudio2 = nullptr;
+   IXAudio2MasteringVoice* pMasterVoice = nullptr;
+--- ruby/input/joypad/xinput.cpp
++++ ruby/input/joypad/xinput.cpp
+@@ -4,18 +4,18 @@
+ //documented functionality
+ #define oXInputGetState  "XInputGetState"
+ #define oXInputSetState  "XInputSetState"
+-typedef DWORD WINAPI (*pXInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
+-typedef DWORD WINAPI (*pXInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
++typedef DWORD (WINAPI *pXInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
++typedef DWORD (WINAPI *pXInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+ 
+ //undocumented functionality
+ #define oXInputGetStateEx             (LPCSTR)100
+ #define oXInputWaitForGuideButton     (LPCSTR)101
+ #define oXInputCancelGuideButtonWait  (LPCSTR)102
+ #define oXInputPowerOffController     (LPCSTR)103
+-typedef DWORD WINAPI (*pXInputGetStateEx)(DWORD dwUserIndex, XINPUT_STATE* pState);
+-typedef DWORD WINAPI (*pXInputWaitForGuideButton)(DWORD dwUserIndex, DWORD dwFlag, void* pUnknown);
+-typedef DWORD WINAPI (*pXInputCancelGuideButtonWait)(DWORD dwUserIndex);
+-typedef DWORD WINAPI (*pXInputPowerOffController)(DWORD dwUserIndex);
++typedef DWORD (WINAPI *pXInputGetStateEx)(DWORD dwUserIndex, XINPUT_STATE* pState);
++typedef DWORD (WINAPI *pXInputWaitForGuideButton)(DWORD dwUserIndex, DWORD dwFlag, void* pUnknown);
++typedef DWORD (WINAPI *pXInputCancelGuideButtonWait)(DWORD dwUserIndex);
++typedef DWORD (WINAPI *pXInputPowerOffController)(DWORD dwUserIndex);
+ 
+ #define XINPUT_GAMEPAD_GUIDE  0x0400
+ 

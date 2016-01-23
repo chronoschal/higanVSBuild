@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Included Source Files">
+      <UniqueIdentifier>{5c1fc71d-6211-424c-892f-bedc39cbf48f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\libco\libco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\libco\libco.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\libco\x86.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\amd64.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\arm.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\fiber.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\ppc.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\sjlj.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+    <None Include="..\libco\ucontext.c">
+      <Filter>Included Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

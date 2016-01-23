@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Support Files">
+      <UniqueIdentifier>{5d6ba9e8-2e5c-40c9-b38f-c75d8cfe966c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files">
+      <UniqueIdentifier>{84072522-a2ca-40c9-b2fa-291fddd5cdda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\configuration">
+      <UniqueIdentifier>{a4229ec2-1751-47e9-be1c-3a4f0dc0bb78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\input">
+      <UniqueIdentifier>{ec158d77-9b4e-44cb-b84c-dfabb7204652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\settings">
+      <UniqueIdentifier>{b3b64f65-1421-42c5-9685-b7af4aa36e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\program">
+      <UniqueIdentifier>{51eecb98-01e7-4cd8-aba8-821794474960}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presentation">
+      <UniqueIdentifier>{8e75926c-cce7-45f4-9b2a-220b34aea509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tools">
+      <UniqueIdentifier>{eeda716e-d901-4daf-a584-41fd608d5b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input">
+      <UniqueIdentifier>{a4ec1cf7-bfc2-4b8c-9689-733be99d4bb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\program">
+      <UniqueIdentifier>{c1a1e794-00fb-4625-a575-6458d3041cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\settings">
+      <UniqueIdentifier>{b55f3d1b-63f5-4b23-8ef2-d31fcf7160c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\tools">
+      <UniqueIdentifier>{f3a9b2da-b043-4f3e-9c88-e5eea6f9030c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\higan\target-tomoko\configuration\configuration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\input\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\program\program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\settings\settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\tomoko.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\tools\tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\higan\target-tomoko\presentation\presentation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\higan\data\resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\higan\profile\Game Boy.sys\boot.rom">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Game Boy Color.sys\boot.rom">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\data\cheats.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Super Famicom.sys\ipl.rom">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Game Boy.sys\manifest.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Famicom.sys\manifest.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Super Famicom.sys\manifest.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Game Boy Advance.sys\manifest.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\profile\Game Boy Color.sys\manifest.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\icarus\Database\Super Famicom.bml">
+      <Filter>Support Files</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\hotkeys.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\input\hotkeys.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\tools\cheat-database.cpp">
+      <Filter>Included Source Files\tools</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\tools\cheat-editor.cpp">
+      <Filter>Included Source Files\tools</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\tools\state-manager.cpp">
+      <Filter>Included Source Files\tools</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\advanced.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\audio.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\input.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\program\interface.cpp">
+      <Filter>Included Source Files\program</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\tools\manifest-viewer.cpp">
+      <Filter>Included Source Files\tools</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\program\media.cpp">
+      <Filter>Included Source Files\program</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\program\state.cpp">
+      <Filter>Included Source Files\program</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\timing.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\program\utility.cpp">
+      <Filter>Included Source Files\program</Filter>
+    </None>
+    <None Include="..\higan\target-tomoko\settings\video.cpp">
+      <Filter>Included Source Files\settings</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\higan\target-tomoko\tomoko.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\configuration\configuration.hpp">
+      <Filter>Header Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\input\input.hpp">
+      <Filter>Header Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\presentation\presentation.hpp">
+      <Filter>Header Files\presentation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\program\program.hpp">
+      <Filter>Header Files\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\settings\settings.hpp">
+      <Filter>Header Files\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\higan\target-tomoko\tools\tools.hpp">
+      <Filter>Header Files\tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

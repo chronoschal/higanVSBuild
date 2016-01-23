@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\video">
+      <UniqueIdentifier>{edee8105-d211-4459-9624-73d02dd2d46b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\video\opengl">
+      <UniqueIdentifier>{5345b4ab-b3f5-4c5f-ae17-d8e01151b16b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\audio">
+      <UniqueIdentifier>{87989009-929a-4262-b770-71b67d0cd51f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files">
+      <UniqueIdentifier>{bb039137-3f81-4704-b02f-6e94dd89c283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\audio">
+      <UniqueIdentifier>{1164a846-7b73-473d-99ac-fa0adf93f5e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input">
+      <UniqueIdentifier>{d13a94b1-4938-4262-b95c-77107348f235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input\shared">
+      <UniqueIdentifier>{1f8fdd99-5330-4d53-9594-6ca02fb27dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input\mouse">
+      <UniqueIdentifier>{85d0c386-4b5b-4459-8cb5-5b6ca7a51881}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input\keyboard">
+      <UniqueIdentifier>{0333bc63-330c-457b-a651-56d3f5901a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\input\joypad">
+      <UniqueIdentifier>{0ba5143a-ea06-430c-a6d6-faf91f6fdeb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Included Source Files\video">
+      <UniqueIdentifier>{bd225234-b4a6-4047-9c36-f19d79899f12}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ruby\ruby.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ruby\video\cgl.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\direct3d.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\directdraw.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\gdi.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\glx.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\glx2.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\sdl.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\wgl.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\xshm.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\video\xv.cpp">
+      <Filter>Included Source Files\video</Filter>
+    </None>
+    <None Include="..\ruby\input\carbon.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\quartz.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\sdl.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\udev.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\windows.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\xlib.cpp">
+      <Filter>Included Source Files\input</Filter>
+    </None>
+    <None Include="..\ruby\input\shared\rawinput.cpp">
+      <Filter>Included Source Files\input\shared</Filter>
+    </None>
+    <None Include="..\ruby\input\mouse\rawinput.cpp">
+      <Filter>Included Source Files\input\mouse</Filter>
+    </None>
+    <None Include="..\ruby\input\mouse\xlib.cpp">
+      <Filter>Included Source Files\input\mouse</Filter>
+    </None>
+    <None Include="..\ruby\input\keyboard\carbon.cpp">
+      <Filter>Included Source Files\input\keyboard</Filter>
+    </None>
+    <None Include="..\ruby\input\keyboard\quartz.cpp">
+      <Filter>Included Source Files\input\keyboard</Filter>
+    </None>
+    <None Include="..\ruby\input\keyboard\rawinput.cpp">
+      <Filter>Included Source Files\input\keyboard</Filter>
+    </None>
+    <None Include="..\ruby\input\keyboard\xlib.cpp">
+      <Filter>Included Source Files\input\keyboard</Filter>
+    </None>
+    <None Include="..\ruby\input\joypad\directinput.cpp">
+      <Filter>Included Source Files\input\joypad</Filter>
+    </None>
+    <None Include="..\ruby\input\joypad\sdl.cpp">
+      <Filter>Included Source Files\input\joypad</Filter>
+    </None>
+    <None Include="..\ruby\input\joypad\udev.cpp">
+      <Filter>Included Source Files\input\joypad</Filter>
+    </None>
+    <None Include="..\ruby\input\joypad\xinput.cpp">
+      <Filter>Included Source Files\input\joypad</Filter>
+    </None>
+    <None Include="..\ruby\audio\alsa.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\ao.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\directsound.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\openal.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\oss.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\pulseaudio.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\pulseaudiosimple.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\wasapi.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+    <None Include="..\ruby\audio\xaudio2.cpp">
+      <Filter>Included Source Files\audio</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ruby\ruby.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\utility.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\bind.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\main.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\opengl.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\program.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\shaders.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\surface.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\video\opengl\texture.hpp">
+      <Filter>Header Files\video\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ruby\audio\xaudio2.hpp">
+      <Filter>Header Files\audio</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
