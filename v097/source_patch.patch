@@ -78,7 +78,7 @@
  struct VideoDD : Video {
    ~VideoDD() { term(); }
  
-+  HMODULE ddrawModule;
++  HMODULE ddrawModule = nullptr;
    LPDIRECTDRAW lpdd = nullptr;
    LPDIRECTDRAW7 lpdd7 = nullptr;
    LPDIRECTDRAWSURFACE7 screen = nullptr;
