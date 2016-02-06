@@ -1,14 +1,16 @@
 --- nall/dsp/resample/average.hpp
 +++ nall/dsp/resample/average.hpp
-@@ -52,7 +52,7 @@
+@@ -51,9 +51,8 @@
+ }
  
  auto ResampleAverage::sampleLinear() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
+       double b = dsp.buffer.read(n, -0);
 --- nall/string/base.hpp
 +++ nall/string/base.hpp
 @@ -158,6 +158,7 @@
@@ -35,26 +37,30 @@
    return append(forward<P>(p)...);
 --- nall/dsp/resample/cosine.hpp
 +++ nall/dsp/resample/cosine.hpp
-@@ -23,7 +23,7 @@
+@@ -22,9 +22,8 @@
+ }
  
  auto ResampleCosine::sample() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
+       double b = dsp.buffer.read(n, -0);
 --- nall/dsp/resample/cubic.hpp
 +++ nall/dsp/resample/cubic.hpp
-@@ -23,7 +23,7 @@
+@@ -22,9 +22,8 @@
+ }
  
  auto ResampleCubic::sample() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -3);
+       double b = dsp.buffer.read(n, -2);
 --- higan/sfc/coprocessor/spc7110/decompressor.cpp
 +++ higan/sfc/coprocessor/spc7110/decompressor.cpp
 @@ -33,7 +33,7 @@
@@ -130,15 +136,17 @@
    //serialization.cpp
 --- nall/dsp/resample/hermite.hpp
 +++ nall/dsp/resample/hermite.hpp
-@@ -23,7 +23,7 @@
+@@ -22,9 +22,8 @@
+ }
  
  auto ResampleHermite::sample() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -3);
+       double b = dsp.buffer.read(n, -2);
 --- higan/target-tomoko/program/interface.cpp
 +++ higan/target-tomoko/program/interface.cpp
 @@ -114,6 +114,7 @@
@@ -162,15 +170,17 @@
      DrawText(ps.hdc, text, -1, &rc, DT_CALCRECT | DT_END_ELLIPSIS);
 --- nall/dsp/resample/linear.hpp
 +++ nall/dsp/resample/linear.hpp
-@@ -23,7 +23,7 @@
+@@ -22,9 +22,8 @@
+ }
  
  auto ResampleLinear::sample() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
+       double b = dsp.buffer.read(n, -0);
 --- hiro/windows/widget/line-edit.cpp
 +++ hiro/windows/widget/line-edit.cpp
 @@ -50,7 +50,7 @@
@@ -196,15 +206,17 @@
 +#endif
 --- nall/dsp/resample/nearest.hpp
 +++ nall/dsp/resample/nearest.hpp
-@@ -23,7 +23,7 @@
+@@ -22,9 +22,8 @@
+ }
  
  auto ResampleNearest::sample() -> void {
++  double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
    while(fraction <= 1.0) {
 -    double channel[dsp.settings.channels];
-+    double *channel = (double*)alloca(dsp.settings.channels * sizeof(double));
- 
+-
      for(auto n : range(dsp.settings.channels)) {
        double a = dsp.buffer.read(n, -1);
+       double b = dsp.buffer.read(n, -0);
 --- nall/string/markup/node.hpp
 +++ nall/string/markup/node.hpp
 @@ -95,9 +95,13 @@
